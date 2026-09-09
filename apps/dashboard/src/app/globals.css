@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+:root {
+  --bg-void: #05070d;
+  --bg-panel: #0a0f1a;
+  --bg-panel-2: #0d1420;
+  --border-glow: rgba(56, 217, 255, 0.25);
+  --cyan: #22e5ff;
+  --cyan-soft: rgba(34, 229, 255, 0.15);
+  --magenta: #d946ef;
+  --magenta-soft: rgba(217, 70, 239, 0.15);
+  --amber: #ffb020;
+  --red: #ff4d5e;
+  --green: #35e29a;
+  --text-primary: #e8f4ff;
+  --text-dim: #6b8299;
+}
+
+@theme inline {
+  --color-void: var(--bg-void);
+  --color-panel: var(--bg-panel);
+  --color-cyan: var(--cyan);
+  --color-magenta: var(--magenta);
+  --color-amber: var(--amber);
+  --font-sans: var(--font-noto);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --font-noto: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, -apple-system, sans-serif;
+  --font-geist-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--bg-void);
+  color: var(--text-primary);
+}
+
+body {
+  font-family: var(--font-noto), "Noto Sans TC", system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ---- HUD 背景：網格 + 掃描線 ---- */
+.hud-grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(34, 229, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 229, 255, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
+  pointer-events: none;
+}
+
+.hud-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(34, 229, 255, 0.08), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(217, 70, 239, 0.06), transparent 55%);
+}
+
+.hud-scanline {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.015) 0px,
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.5;
+}
+
+/* ---- 玻璃面板 ---- */
+.hud-panel {
+  position: relative;
+  background: linear-gradient(180deg, rgba(13, 20, 32, 0.85), rgba(10, 15, 26, 0.85));
+  border: 1px solid var(--border-glow);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 0 0 1px rgba(34, 229, 255, 0.04) inset,
+    0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+.hud-panel-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+/* ---- 發光文字 / 邊框工具 class ---- */
+.glow-cyan {
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(34, 229, 255, 0.6);
+}
+.glow-magenta {
+  color: var(--magenta);
+  text-shadow: 0 0 10px rgba(217, 70, 239, 0.6);
+}
+.border-glow-cyan {
+  border-color: rgba(34, 229, 255, 0.45) !important;
+  box-shadow: 0 0 18px rgba(34, 229, 255, 0.15);
+}
+.border-glow-magenta {
+  border-color: rgba(217, 70, 239, 0.45) !important;
+  box-shadow: 0 0 18px rgba(217, 70, 239, 0.15);
+}
+
+/* ---- 狀態脈動動畫 ---- */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+.status-pulse {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 42px 42px; }
+}
+.hud-grid-bg {
+  animation: drift 6s linear infinite;
+}
+
+/* ---- 捲軸美化 ---- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 229, 255, 0.3) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(34, 229, 255, 0.3);
+  border-radius: 4px;
+}
+
+/* ---- React Flow 覆寫，融入 HUD 風格 ---- */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__edge-path {
+  stroke: rgba(34, 229, 255, 0.35);
+  stroke-width: 1.5;
+}
+.react-flow__controls {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.react-flow__controls button {
+  background: transparent;
+  border-bottom: 1px solid rgba(34, 229, 255, 0.15) !important;
+  color: var(--text-primary);
+}
+.react-flow__controls button:hover {
+  background: rgba(34, 229, 255, 0.1);
+}
